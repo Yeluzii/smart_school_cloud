@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  maku-cloud-gateway:
+    image: makunet:1.0
+    container_name: maku-cloud-gateway
+    ports:
+      - 8080:8080
+    volumes:
+      - /work/www/maku-cloud/maku-cloud-gateway.jar:/app/app.jar
+  maku-cloud-system:
+    image: makunet:1.0
+    container_name: maku-cloud-system
+    volumes:
+      - /work/www/maku-cloud/maku-cloud-system.jar:/app/app.jar
