@@ -1,0 +1,6 @@
+auth:
+  ignore_urls:
+    - /auth/login
+    - /auth/send/code
+    - /auth/mobile/**
+    - /user/getUserById
