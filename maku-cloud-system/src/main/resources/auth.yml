@@ -11,3 +11,4 @@ auth:
     - /sys/third/render/**
     - /upload/**
     - /
+    - /sys/tenant/list
