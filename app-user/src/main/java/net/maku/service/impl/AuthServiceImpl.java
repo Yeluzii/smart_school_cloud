@@ -1,10 +1,17 @@
 package net.maku.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import net.maku.convert.UserConvert;
+import net.maku.dao.SysRoleDao;
+import net.maku.dao.SysUserRoleDao;
+import net.maku.dao.UserDao;
 import net.maku.dto.AccountLoginDTO;
 import net.maku.dto.MobileLoginDTO;
 import net.maku.dto.MobileRegisterDTO;
+import net.maku.entity.SysRoleEntity;
+import net.maku.entity.SysUserRoleEntity;
 import net.maku.entity.UserEntity;
+import net.maku.framework.common.exception.ErrorCode;
 import net.maku.framework.common.exception.ServerException;
 import net.maku.framework.security.cache.TokenStoreCache;
 import net.maku.framework.security.mobile.MobileAuthenticationToken;
@@ -23,6 +30,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -30,9 +40,14 @@ public class AuthServiceImpl implements AuthService {
     private final TokenStoreCache tokenStoreCache;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final UserDao userDao;
 
     @Override
     public AccountLoginVO loginByAccount(AccountLoginDTO login) {
+        UserEntity userDaoByUsername = userDao.getByUsername(login.getUsername());
+        if (userDaoByUsername == null) {
+            throw new ServerException("未注册");
+        }
         Authentication authentication;
         try {
             // ⽤户认证
