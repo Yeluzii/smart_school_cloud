@@ -12,7 +12,6 @@ import java.util.List;
  * <a href="https://maku.net">MAKU</a>
  */
 public interface SysUserRoleService extends BaseService<SysUserRoleEntity> {
-
     /**
      * 保存或修改
      * @param userId      用户ID

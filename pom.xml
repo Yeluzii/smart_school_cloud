@@ -23,6 +23,7 @@
 		<module>maku-cloud-new</module>
 		<module>maku-cloud-system</module>
         <module>maku-cloud-gateway</module>
+        <module>app-user</module>
     </modules>
 
     <properties>

@@ -49,4 +49,5 @@ public interface Constant {
      */
     String PGSQL_DRIVER = "org.postgresql.Driver";
 
+    String USER_ID = "userId";
 }
