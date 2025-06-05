@@ -2,9 +2,12 @@ package net.maku.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
+import net.maku.system.dao.SysRoleDao;
 import net.maku.system.dao.SysUserRoleDao;
+import net.maku.system.entity.SysRoleEntity;
 import net.maku.system.entity.SysUserRoleEntity;
 import net.maku.system.service.SysUserRoleService;
 import net.maku.system.service.SysUserTokenService;
