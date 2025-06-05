@@ -39,7 +39,7 @@ public class TNewsServiceImpl extends BaseServiceImpl<TNewsDao, TNewsEntity> imp
     private LambdaQueryWrapper<TNewsEntity> getWrapper(TNewsQuery query){
         LambdaQueryWrapper<TNewsEntity> wrapper = Wrappers.lambdaQuery();
 
-        if (query.getBa nner() != null) {
+        if (query.getBanner() != null) {
             wrapper.eq(TNewsEntity::getBanner, query.getBanner());
         }
         if (query.getStatus() != null) {
