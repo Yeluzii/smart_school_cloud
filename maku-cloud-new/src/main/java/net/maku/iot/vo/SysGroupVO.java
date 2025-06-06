@@ -32,15 +32,16 @@ public class SysGroupVO implements Serializable {
 
 	private Long tenantId;
 
+	@Schema(description = "备注")
+	private String info;
+  
 	private Long updater;
+
 
 	private Integer deleted;
 
 	private Long orgId;
 
 	private Integer version;
-
-	@Schema(description = "备注")
-	private String info;
 
 }

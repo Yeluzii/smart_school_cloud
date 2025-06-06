@@ -83,6 +83,8 @@ public class SysUserVO implements Serializable, TransPojo {
     @Schema(description = "机构名称")
     private String orgName;
 
+    @Schema(description = "租户ID")
+    private Long tenantId;
     @Schema(description = "创建时间")
     @JsonFormat(pattern = DateUtils.DATE_TIME_PATTERN)
     private LocalDateTime createTime;
