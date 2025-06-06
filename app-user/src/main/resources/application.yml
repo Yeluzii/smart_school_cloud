@@ -1,9 +1,9 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
-    name: maku-cloud-system
+    name: app-user
   cloud:
     nacos:
       username: @nacos.username@
@@ -18,18 +18,3 @@ spring:
     import:
       - optional:nacos:datasource.yaml
       - optional:nacos:common.yaml
-  mqtt:
-    host: tcp://117.72.93.22:1883
-    username: admin
-    password: public
-    clientId: springboot-server8888
-    default-topic: iot/device/#
-
-storage:
-  enabled: true
-  config:
-    # 存储类型：local、aliyun、tencent、qiniu、huawei、minio
-    type: local
-    domain: http://localhost:8080
-  local:
-    path: D://upload

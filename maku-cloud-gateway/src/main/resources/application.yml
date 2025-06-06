@@ -24,6 +24,13 @@ spring:
             - Path=/new/**
           filters:
             - StripPrefix=1
+        - id: app-user
+          uri: lb://app-user
+          order: 2
+          predicates:
+            - Path=/app/**
+          filters:
+            - StripPrefix=1
     nacos:
       username: @nacos.username@
       password: @nacos.password@
