@@ -17,18 +17,25 @@ spring:
           order: 999999
           predicates:
             - Path=/**
-        - id: app-user
-          uri: lb://app-user
-          order: 2
-          predicates:
-            - Path=/app/**
-          filters:
-            - StripPrefix=1
         - id: maku-cloud-new
           uri: lb://maku-cloud-new
           order: 1
           predicates:
             - Path=/new/**
+          filters:
+            - StripPrefix=1
+        - id: app-user
+          uri: lb://app-user
+          order: 3
+          predicates:
+            - Path=/app/**
+          filters:
+            - StripPrefix=1
+        - id: app-iot
+          uri: lb://app-iot
+          order: 2
+          predicates:
+            - Path=/app_iot/**
           filters:
             - StripPrefix=1
     nacos:
