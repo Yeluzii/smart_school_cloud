@@ -24,6 +24,7 @@
 		<module>maku-cloud-system</module>
         <module>maku-cloud-gateway</module>
         <module>app-user</module>
+        <module>app-iot</module>
     </modules>
 
     <properties>
