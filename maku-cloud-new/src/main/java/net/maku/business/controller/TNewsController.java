@@ -77,6 +77,4 @@ public class TNewsController {
 
         return Result.ok();
     }
-
-
 }
