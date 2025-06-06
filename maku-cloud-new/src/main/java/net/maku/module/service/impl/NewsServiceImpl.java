@@ -43,6 +43,32 @@ public class NewsServiceImpl implements NewsService {
         return Result.ok(transformToVO(news));
     }
 
+    @Override
+    public Result<List<NewsVO>> getAnnouncementList() {
+        List<NewsEntity> announcementList = newsMapper.selectList(
+                new QueryWrapper<NewsEntity>()
+                        .eq("status", 1)
+                        .eq("deleted", 0)
+                        .eq("type", 0)
+                        .orderByDesc("create_time")
+        );
+        return Result.ok(transformToVOList(announcementList));
+    }
+
+
+    @Override
+    public Result<List<NewsVO>> getCampusInfoList() {
+        List<NewsEntity> campusInfoList = newsMapper.selectList(
+                new QueryWrapper<NewsEntity>()
+                        .eq("status", 1)
+                        .eq("deleted", 0)
+                        .eq("type", 1)   // 只查询校园信息
+                        .orderByDesc("create_time")
+        );
+        return Result.ok(transformToVOList(campusInfoList));
+    }
+
+
     private List<NewsVO> transformToVOList(List<NewsEntity> entities) {
         return entities.stream().map(this::transformToVO).collect(Collectors.toList());
     }

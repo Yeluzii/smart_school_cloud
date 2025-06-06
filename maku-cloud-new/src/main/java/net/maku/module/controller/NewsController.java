@@ -36,4 +36,17 @@ public class NewsController {
     public Result<NewsVO> getNewsDetails(@RequestParam Long id) {
         return newsService.getNewsDetails(id);
     }
+
+    @GetMapping("/announcement")
+    @Tag(name = "公告列表")
+    public Result<List<NewsVO>> getAnnouncementList() {
+        return newsService.getAnnouncementList();
+    }
+
+    @GetMapping("/campus")
+    @Tag(name = "校园信息列表")
+    public Result<List<NewsVO>> getCampusInfoList() {
+        return newsService.getCampusInfoList();
+    }
+
 }

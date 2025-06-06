@@ -9,4 +9,7 @@ public interface NewsService {
     Result<List<NewsVO>> getBannerNews();
     Result<List<NewsVO>> getNewsList();
     Result<NewsVO> getNewsDetails(Long id);
+    Result<List<NewsVO>> getAnnouncementList();
+    Result<List<NewsVO>> getCampusInfoList();
+
 }
