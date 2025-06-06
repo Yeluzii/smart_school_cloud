@@ -32,7 +32,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implements DeviceService {
     private final MessageChannel mqttOutboundChannel;
-
+    private final DeviceDao deviceDao;
     @Override
     public PageResult<DeviceVO> page(DeviceQuery query) {
         Map<String, Object> params = getParams(query);
@@ -61,7 +61,21 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
         // 构建json命令
         Map<String, Object> map = new HashMap<>();
         map.put("uid", uid);
-        map.put("command", command);
+//        map.put("command", command);
+        String type = device.getType().toString();
+        switch (type){
+            case "fan":
+                map.put("fan", command);
+                break;
+            case "voice_led", "smart_led":
+                map.put("led", command);
+                break;
+            case "door":
+                map.put("door", command);
+                break;
+            default:
+                throw new ServerException("设备类型错误");
+        }
         String payload = JSON.toJSONString(map);
         Message<String> message = MessageBuilder.withPayload(payload)
                 .setHeader("mqtt_topic", "device/" + uid + "/control")
