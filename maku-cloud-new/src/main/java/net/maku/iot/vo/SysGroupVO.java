@@ -26,21 +26,20 @@ public class SysGroupVO implements Serializable {
 
 	private Long creator;
 
+	private Long updater;
+
 	private Date createTime;
 
 	private Date updateTime;
 
 	private Long tenantId;
 
-	private Long updater;
+	@Schema(description = "备注")
+	private String info;
 
 	private Integer deleted;
 
 	private Long orgId;
 
 	private Integer version;
-
-	@Schema(description = "备注")
-	private String info;
-
 }
