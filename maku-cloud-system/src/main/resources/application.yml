@@ -29,7 +29,10 @@ storage:
   enabled: true
   config:
     # 存储类型：local、aliyun、tencent、qiniu、huawei、minio
-    type: local
-    domain: http://localhost:8080
-  local:
-    path: D://upload
+    type: minio
+  minio:
+    access-key: xxx
+    secret-key: xxx
+    end-point: http://117.72.93.22:9000
+    bucket-name: yyy-se
+
