@@ -27,4 +27,5 @@ public class RoleServiceImpl extends BaseServiceImpl<SysRoleDao, SysRoleEntity> 
             return roleVO;
         }).toList();
     }
+
 }
