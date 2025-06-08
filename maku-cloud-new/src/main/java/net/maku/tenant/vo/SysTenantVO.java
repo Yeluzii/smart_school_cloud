@@ -28,15 +28,8 @@ public class SysTenantVO implements Serializable {
 	@Schema(description = "用户名")
 	private String username;
 
-	@Schema(description = "手机号")
-	private String mobile;
-
 	@Schema(description = "租户套餐")
 	private Long packageId;
-
-	@Schema(description = "过期时间")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date expireTime;
 
 	@Schema(description = "状态 0未启用 1启用")
 	private Integer status;
