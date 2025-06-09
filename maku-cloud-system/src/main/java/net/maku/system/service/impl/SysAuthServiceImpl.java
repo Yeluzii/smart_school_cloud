@@ -48,6 +48,7 @@ public class SysAuthServiceImpl implements SysAuthService {
 
             throw new ServerException("验证码错误");
         }
+        Long tenantId = login.getTenantId();
 
         Authentication authentication;
         try {

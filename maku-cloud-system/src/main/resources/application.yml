@@ -25,14 +25,14 @@ spring:
     clientId: springboot-server8888
     default-topic: iot/device/#
 
-storage:
-  enabled: true
-  config:
-    # 存储类型：local、aliyun、tencent、qiniu、huawei、minio
-    type: minio
-  minio:
-    access-key: xxx
-    secret-key: xxx
-    end-point: http://117.72.93.22:9000
-    bucket-name: yyy-se
+#storage:
+#  enabled: true
+#  config:
+#    # 存储类型：local、aliyun、tencent、qiniu、huawei、minio
+#    type: minio
+#  minio:
+#    access-key: xxx
+#    secret-key: xxx
+#    end-point: http://117.72.93.22:9000
+#    bucket-name: yyy-se
 
