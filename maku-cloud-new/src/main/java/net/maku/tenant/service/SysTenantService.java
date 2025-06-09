@@ -2,6 +2,8 @@ package net.maku.tenant.service;
 
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.BaseService;
+import net.maku.tenant.dto.SysTenantDTO;
+import net.maku.tenant.dto.UpdatePasswordDTO;
 import net.maku.tenant.vo.SysTenantVO;
 import net.maku.tenant.query.SysTenantQuery;
 import net.maku.tenant.entity.SysTenantEntity;
@@ -20,11 +22,12 @@ public interface SysTenantService extends BaseService<SysTenantEntity> {
     SysTenantVO get(Long id);
 
 
-    void save(SysTenantVO vo);
+    void save(SysTenantDTO dto);
 
-    void update(SysTenantVO vo);
+    void update(SysTenantDTO dto);
 
     void delete(List<Long> idList);
 
+    void updatePassword(UpdatePasswordDTO dto);
 
 }
