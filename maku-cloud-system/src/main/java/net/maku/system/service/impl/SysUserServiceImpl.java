@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 用户管理
@@ -85,16 +86,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
         params.put("username", query.getUsername());
         params.put("mobile", query.getMobile());
         params.put("gender", query.getGender());
-
+        params.put("tenantId", Objects.requireNonNull(SecurityUser.getUser()).getTenantId());
         // 数据权限
-        params.put(Constant.DATA_SCOPE, getDataScope("t1", null));
+//        params.put(Constant.DATA_SCOPE, getDataScope("t1", null));
 
         // 机构过滤
-        if (query.getOrgId() != null) {
-            // 查询子机构ID列表，包含本机构
-            List<Long> orgList = sysOrgService.getSubOrgIdList(query.getOrgId());
-            params.put("orgList", orgList);
-        }
+//        if (query.getOrgId() != null) {
+//            // 查询子机构ID列表，包含本机构
+//            List<Long> orgList = sysOrgService.getSubOrgIdList(query.getOrgId());
+//            params.put("orgList", orgList);
+//        }
 
         return params;
     }

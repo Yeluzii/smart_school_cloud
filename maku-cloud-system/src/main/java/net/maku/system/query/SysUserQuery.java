@@ -24,7 +24,4 @@ public class SysUserQuery extends Query {
     @Schema(description = "性别")
     private Integer gender;
 
-    @Schema(description = "机构ID")
-    private Long orgId;
-
 }
