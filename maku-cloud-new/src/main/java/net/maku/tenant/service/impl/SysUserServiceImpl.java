@@ -28,11 +28,12 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
     }
 
     @Override
-    public void addTenantAccount(TenantUserDTO dto) {
+    public Long addTenantAccount(TenantUserDTO dto) {
         SysUserEntity user = new SysUserEntity();
         user.setTenantId(dto.getTenantId());
         user.setPassword(SmUtil.sm3(dto.getPassword()));
         user.setUsername(dto.getUsername());
         baseMapper.insert(user);
+        return user.getId();
     }
 }

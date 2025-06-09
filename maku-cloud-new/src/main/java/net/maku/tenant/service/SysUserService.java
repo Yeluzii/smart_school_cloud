@@ -9,5 +9,5 @@ public interface SysUserService extends BaseService<SysUserEntity> {
     // 修改租户负责人密码
     void updateUserPassword(UpdatePasswordDTO dto);
     // 新增租户，加账号
-    void addTenantAccount(TenantUserDTO dto);
+    Long addTenantAccount(TenantUserDTO dto);
 }

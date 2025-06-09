@@ -16,6 +16,7 @@ import net.maku.tenant.dto.UpdatePasswordDTO;
 import net.maku.tenant.entity.SysTenantEntity;
 import net.maku.tenant.entity.SysUserEntity;
 import net.maku.tenant.query.SysTenantQuery;
+import net.maku.tenant.service.SysUserRoleService;
 import net.maku.tenant.service.SysUserService;
 import net.maku.tenant.vo.SysTenantVO;
 import net.maku.tenant.dao.SysTenantDao;
@@ -36,6 +37,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantDao, SysTenantEntity> implements SysTenantService {
     private final SysUserService sysUserService;
+    private final SysUserRoleService sysUserRoleService;
 
     @Override
     public PageResult<SysTenantVO> page(SysTenantQuery query) {
@@ -70,7 +72,8 @@ public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantDao, SysTenan
         tenantUserDTO.setTenantId(entity.getId());
         tenantUserDTO.setUsername(dto.getUsername());
         tenantUserDTO.setPassword("123456");
-        sysUserService.addTenantAccount(tenantUserDTO);
+        Long userId = sysUserService.addTenantAccount(tenantUserDTO);
+        sysUserRoleService.addUserRole(userId);
 
     }
 

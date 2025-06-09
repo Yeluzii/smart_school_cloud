@@ -9,7 +9,6 @@ import net.maku.system.vo.*;
  * <a href="https://maku.net">MAKU</a>
  */
 public interface SysAuthService {
-
     /**
      * 账号密码登录
      *
