@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
 import net.maku.tenant.convert.SysTenantConvert;
+import net.maku.tenant.dao.SysUserDao;
 import net.maku.tenant.dto.SysTenantDTO;
 import net.maku.tenant.dto.TenantUserDTO;
 import net.maku.tenant.dto.UpdatePasswordDTO;
@@ -38,6 +39,7 @@ import java.util.List;
 public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantDao, SysTenantEntity> implements SysTenantService {
     private final SysUserService sysUserService;
     private final SysUserRoleService sysUserRoleService;
+    private final SysUserDao sysUserDao;
 
     @Override
     public PageResult<SysTenantVO> page(SysTenantQuery query) {
@@ -65,15 +67,16 @@ public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantDao, SysTenan
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(SysTenantDTO dto) {
-        dto.setPassword(SmUtil.sm3(dto.getPassword()));
+        String password = SmUtil.sm3("123456");
+        dto.setPassword(password);
         SysTenantEntity entity = SysTenantConvert.INSTANCE.convert(dto);
         baseMapper.insert(entity);
         TenantUserDTO tenantUserDTO = new TenantUserDTO();
         tenantUserDTO.setTenantId(entity.getId());
         tenantUserDTO.setUsername(dto.getUsername());
-        tenantUserDTO.setPassword("123456");
+        tenantUserDTO.setPassword(password);
         Long userId = sysUserService.addTenantAccount(tenantUserDTO);
-        sysUserRoleService.addUserRole(userId);
+        sysUserRoleService.addUserRole(userId,entity.getId());
 
     }
 
@@ -96,10 +99,19 @@ public class SysTenantServiceImpl extends BaseServiceImpl<SysTenantDao, SysTenan
 
     @Override
     public void updatePassword(UpdatePasswordDTO dto) {
+        String password =  SmUtil.sm3(dto.getNewPassword());
+        // 更新租户表密码
         UpdateWrapper<SysTenantEntity> wrapper = new UpdateWrapper<>();
         wrapper.eq("id",dto.getTenantId())
-                .set("password",SmUtil.sm3(dto.getNewPassword()));
+                .set("password",password);
         update(wrapper);
+
+        // 更新用户表密码
+        UpdateWrapper<SysUserEntity> userWrapper = new UpdateWrapper<>();
+        Long userId = sysUserRoleService.getUserId(dto.getTenantId());
+        userWrapper.eq("id",userId)
+                .set("password",password);
+        sysUserDao.update(userWrapper);
     }
 
 

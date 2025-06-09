@@ -23,8 +23,9 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRoleDao, SysU
     }
 
     @Override
-    public void addUserRole(Long userId) {
+    public void addUserRole(Long userId,Long tenantId) {
         SysUserRoleEntity sysUserRoleEntity = new SysUserRoleEntity();
+        sysUserRoleEntity.setTenantId(tenantId);
         sysUserRoleEntity.setUserId(userId);
         sysUserRoleEntity.setRoleId(2L);
         baseMapper.insert(sysUserRoleEntity);
