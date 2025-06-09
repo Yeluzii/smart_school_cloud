@@ -31,7 +31,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
     public Long addTenantAccount(TenantUserDTO dto) {
         SysUserEntity user = new SysUserEntity();
         user.setTenantId(dto.getTenantId());
-        user.setPassword(SmUtil.sm3(dto.getPassword()));
+        user.setPassword(dto.getPassword());
         user.setUsername(dto.getUsername());
         baseMapper.insert(user);
         return user.getId();
