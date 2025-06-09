@@ -1,10 +1,13 @@
 package net.maku.system.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SmUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fhs.trans.service.impl.TransService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.constant.Constant;
 import net.maku.framework.common.excel.ExcelFinishCallBack;
 import net.maku.framework.common.exception.ServerException;
@@ -12,6 +15,7 @@ import net.maku.framework.common.utils.ExcelUtils;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
 import net.maku.framework.security.cache.TokenStoreCache;
+import net.maku.framework.security.crypto.Sm2Util;
 import net.maku.framework.security.user.SecurityUser;
 import net.maku.framework.security.utils.TokenUtils;
 import net.maku.system.convert.SysUserConvert;
@@ -32,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 用户管理
@@ -41,6 +46,7 @@ import java.util.Map;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntity> implements SysUserService {
     private final SysUserRoleService sysUserRoleService;
     private final SysUserPostService sysUserPostService;
@@ -48,6 +54,17 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
     private final SysOrgService sysOrgService;
     private final TokenStoreCache tokenStoreCache;
     private final TransService transService;
+
+    @Override
+    public boolean isAdmin(Long tenantId, String username, String password) {
+        log.info("t:{}, 用户名：{}，密码：{}", tenantId, username, password);
+        String decryptPassword = Sm2Util.decrypt(password);
+        log.info("解密密码：{}", decryptPassword);
+        String adminPassword = baseMapper.getUser(tenantId, username);
+        boolean isAdmin = StrUtil.equals(SmUtil.sm3(decryptPassword), adminPassword);
+        log.info("是否管理员：{}", isAdmin);
+        return isAdmin;
+    }
 
     @Override
     public PageResult<SysUserVO> page(SysUserQuery query) {
@@ -69,16 +86,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
         params.put("username", query.getUsername());
         params.put("mobile", query.getMobile());
         params.put("gender", query.getGender());
-
+        params.put("tenantId", Objects.requireNonNull(SecurityUser.getUser()).getTenantId());
         // 数据权限
-        params.put(Constant.DATA_SCOPE, getDataScope("t1", null));
+//        params.put(Constant.DATA_SCOPE, getDataScope("t1", null));
 
         // 机构过滤
-        if (query.getOrgId() != null) {
-            // 查询子机构ID列表，包含本机构
-            List<Long> orgList = sysOrgService.getSubOrgIdList(query.getOrgId());
-            params.put("orgList", orgList);
-        }
+//        if (query.getOrgId() != null) {
+//            // 查询子机构ID列表，包含本机构
+//            List<Long> orgList = sysOrgService.getSubOrgIdList(query.getOrgId());
+//            params.put("orgList", orgList);
+//        }
 
         return params;
     }

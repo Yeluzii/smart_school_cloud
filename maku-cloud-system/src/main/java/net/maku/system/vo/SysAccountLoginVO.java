@@ -22,6 +22,9 @@ public class SysAccountLoginVO implements Serializable {
     @Schema(description = "密码")
     private String password;
 
+    @Schema(description = "租户ID")
+    private Long tenantId;
+
     @Schema(description = "唯一key")
     private String key;
 
