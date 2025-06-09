@@ -79,13 +79,13 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenuEntit
     public List<SysMenuVO> getUserMenuList(UserDetail user, Integer type) {
         List<SysMenuEntity> menuList;
 
-//        // 系统管理员，拥有最高权限
-//        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
-//            menuList = baseMapper.getMenuList(type);
-//        } else {
+        // 系统管理员，拥有最高权限
+        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
+            menuList = baseMapper.getMenuList(type);
+        } else {
 //            menuList = baseMapper.getUserMenuList(user.getId(), type);
-//        }
-        menuList = baseMapper.getTenantMenuList(user.getTenantId(), type);
+            menuList = baseMapper.getTenantMenuList(user.getTenantId(), type);
+        }
         return TreeUtils.build(SysMenuConvert.INSTANCE.convertList(menuList));
     }
 
@@ -98,22 +98,21 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenuEntit
     public Set<String> getUserAuthority(UserDetail user) {
         // 系统管理员，拥有最高权限
         List<String> authorityList;
-//        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
-//            authorityList = baseMapper.getAuthorityList();
-//        } else {
-//            authorityList = baseMapper.getUserAuthorityList(user.getId());
-//        }
-        log.info("租户id：{}", user.getTenantId());
-        authorityList = baseMapper.getTenantAuthorityList(user.getTenantId());
-        // 用户权限列表
         Set<String> permsSet = new HashSet<>();
+        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
+            authorityList = baseMapper.getAuthorityList();
+        } else {
+//            authorityList = baseMapper.getUserAuthorityList(user.getId());
+            log.info("租户id：{}", user.getTenantId());
+            authorityList = baseMapper.getTenantAuthorityList(user.getTenantId());
+        }
+        // 用户权限列表
         for (String authority : authorityList) {
             if (StrUtil.isBlank(authority)) {
                 continue;
             }
             permsSet.addAll(Arrays.asList(authority.trim().split(",")));
         }
-
         return permsSet;
     }
 
