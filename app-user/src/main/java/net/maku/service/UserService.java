@@ -13,4 +13,5 @@ public interface UserService extends BaseService<UserEntity> {
     UserVO getByMobile(String mobile);
 
     UserVO getById(Long id);
+    boolean changePassword(Long userId, String newPassword);
 }
