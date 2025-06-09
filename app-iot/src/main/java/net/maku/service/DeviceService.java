@@ -8,5 +8,5 @@ import net.maku.vo.DeviceVO;
 
 public interface DeviceService extends BaseService<Device> {
     PageResult<DeviceVO> page(DeviceQuery query);
-    void sendCommand(String deviceId, String command);
+    void sendCommand(Long deviceId, String command);
 }

@@ -51,8 +51,10 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
     }
 
     @Override
-    public void sendCommand(String uid, String command) {
+    public void sendCommand(Long deviceId, String command) {
         QueryWrapper<Device> query = new QueryWrapper<>();
+        query.eq("id", deviceId);
+        String uid = deviceDao.selectOne(query).getUid();
         query.eq("uid", uid);
         Device device = this.getOne(query);
         if (device == null) {
@@ -62,15 +64,29 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
         Map<String, Object> map = new HashMap<>();
         map.put("uid", uid);
 //        map.put("command", command);
-        String type = device.getType().toString();
+//        String type = device.getType().toString();
+//        switch (type){
+//            case "fan":
+//                map.put("fan", command);
+//                break;
+//            case "voice_led", "smart_led":
+//                map.put("led", command);
+//                break;
+//            case "door":
+//                map.put("door", command);
+//                break;
+//            default:
+//                throw new ServerException("设备类型错误");
+//        }
+        Integer type = device.getType();
         switch (type){
-            case "fan":
+            case 4:
                 map.put("fan", command);
                 break;
-            case "voice_led", "smart_led":
+            case 1,2:
                 map.put("led", command);
                 break;
-            case "door":
+            case 3:
                 map.put("door", command);
                 break;
             default:
@@ -78,7 +94,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
         }
         String payload = JSON.toJSONString(map);
         Message<String> message = MessageBuilder.withPayload(payload)
-                .setHeader("mqtt_topic", "device/" + uid + "/control")
+                .setHeader("mqtt_topic", "device/control")
                 .build();
         mqttOutboundChannel.send(message);
     }
