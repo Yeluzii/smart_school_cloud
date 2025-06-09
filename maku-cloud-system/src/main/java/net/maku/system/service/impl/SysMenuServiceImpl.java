@@ -3,6 +3,7 @@ package net.maku.system.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.exception.ServerException;
 import net.maku.framework.common.utils.TreeUtils;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
@@ -30,6 +31,7 @@ import java.util.Set;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenuEntity> implements SysMenuService {
     private final SysRoleMenuService sysRoleMenuService;
 
@@ -77,13 +79,13 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenuEntit
     public List<SysMenuVO> getUserMenuList(UserDetail user, Integer type) {
         List<SysMenuEntity> menuList;
 
-        // 系统管理员，拥有最高权限
-        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
-            menuList = baseMapper.getMenuList(type);
-        } else {
-            menuList = baseMapper.getUserMenuList(user.getId(), type);
-        }
-
+//        // 系统管理员，拥有最高权限
+//        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
+//            menuList = baseMapper.getMenuList(type);
+//        } else {
+//            menuList = baseMapper.getUserMenuList(user.getId(), type);
+//        }
+        menuList = baseMapper.getTenantMenuList(user.getTenantId(), type);
         return TreeUtils.build(SysMenuConvert.INSTANCE.convertList(menuList));
     }
 
@@ -96,12 +98,13 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenuEntit
     public Set<String> getUserAuthority(UserDetail user) {
         // 系统管理员，拥有最高权限
         List<String> authorityList;
-        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
-            authorityList = baseMapper.getAuthorityList();
-        } else {
-            authorityList = baseMapper.getUserAuthorityList(user.getId());
-        }
-
+//        if (user.getSuperAdmin().equals(SuperAdminEnum.YES.getValue())) {
+//            authorityList = baseMapper.getAuthorityList();
+//        } else {
+//            authorityList = baseMapper.getUserAuthorityList(user.getId());
+//        }
+        log.info("租户id：{}", user.getTenantId());
+        authorityList = baseMapper.getTenantAuthorityList(user.getTenantId());
         // 用户权限列表
         Set<String> permsSet = new HashSet<>();
         for (String authority : authorityList) {

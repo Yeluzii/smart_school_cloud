@@ -49,26 +49,29 @@ public class SysAuthServiceImpl implements SysAuthService {
             throw new ServerException("验证码错误");
         }
         Long tenantId = login.getTenantId();
+        if (sysUserService.isAdmin(tenantId, login.getUsername(), login.getPassword())){
+            Authentication authentication;
+            try {
+                // 用户认证
+                authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(login.getUsername(), Sm2Util.decrypt(login.getPassword())));
+            } catch (BadCredentialsException e) {
+                throw new ServerException("用户名或密码错误");
+            }
 
-        Authentication authentication;
-        try {
-            // 用户认证
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(login.getUsername(), Sm2Util.decrypt(login.getPassword())));
-        } catch (BadCredentialsException e) {
+            // 用户信息
+            UserDetail user = (UserDetail) authentication.getPrincipal();
+            System.out.println("用户信息\n" + user.toString());
+            // 生成 accessToken
+            SysUserTokenVO userTokenVO = sysUserTokenService.createToken(user.getId());
+
+            // 保存用户信息到缓存
+            tokenStoreCache.saveUser(userTokenVO.getAccessToken(), user);
+
+            return userTokenVO;
+        } else {
             throw new ServerException("用户名或密码错误");
         }
-
-        // 用户信息
-        UserDetail user = (UserDetail) authentication.getPrincipal();
-
-        // 生成 accessToken
-        SysUserTokenVO userTokenVO = sysUserTokenService.createToken(user.getId());
-
-        // 保存用户信息到缓存
-        tokenStoreCache.saveUser(userTokenVO.getAccessToken(), user);
-
-        return userTokenVO;
     }
 
     @Override

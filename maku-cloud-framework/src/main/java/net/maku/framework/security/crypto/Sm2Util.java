@@ -1,6 +1,7 @@
 package net.maku.framework.security.crypto;
 
 import cn.hutool.core.util.HexUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.SmUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
@@ -74,11 +75,11 @@ public class Sm2Util {
         }
 
         String password = "admin";
-        String sm2Password = Sm2Util.encrypt(password);
-        System.out.println("sm2 加密:" + sm2Password);
-        System.out.println("sm2 解密:" + Sm2Util.decrypt(sm2Password));
-
-
-        System.out.println("sm3 解密:" + SmUtil.sm3("admin"));
+//        String sm2Password = Sm2Util.encrypt(password);
+//        System.out.println("sm2 加密:" + sm2Password);
+//        System.out.println("sm2 解密:" + Sm2Util.decrypt(sm2Password));
+        String password2 = SmUtil.sm3(password);
+        System.out.println("sm3 加密:" + password2);
+        System.out.println("sm3 验证:" + StrUtil.equals("admin", "dc1fd00e3eeeb940ff46f457bf97d66ba7fcc36e0b20802383de142860e76ae6"));
     }
 }
