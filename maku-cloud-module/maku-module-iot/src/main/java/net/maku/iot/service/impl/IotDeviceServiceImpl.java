@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.exception.ServerException;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
+import net.maku.framework.security.user.SecurityUser;
 import net.maku.iot.convert.IotDeviceConvert;
 import net.maku.iot.dao.IotDeviceDao;
 import net.maku.iot.entity.IotDeviceEntity;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 设备服务类
@@ -67,7 +69,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<IotDeviceDao, IotDevic
     @Override
     public void save(IotDeviceVO vo) {
         IotDeviceEntity entity = IotDeviceConvert.INSTANCE.convert(vo);
-
+        entity.setTenantId(Objects.requireNonNull(SecurityUser.getUser()).getTenantId());
         baseMapper.insert(entity);
     }
 

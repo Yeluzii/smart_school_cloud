@@ -10,8 +10,7 @@ import net.maku.framework.operatelog.enums.OperateTypeEnum;
 import net.maku.iot.dto.BatchSaveDTO;
 import net.maku.iot.service.TDeviceGroupService;
 import net.maku.iot.query.TDeviceGroupQuery;
-import net.maku.iot.vo.DeviceVO;
-import net.maku.iot.vo.TDeviceGroupVO;
+import net.maku.iot.vo.*;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +57,20 @@ public class TDeviceGroupController {
 
         return Result.ok(data);
     }
+    @GetMapping("get/group/{id}")
+    @Operation(summary = "信息")
+    public Result<List<UserGroupVO>> selectGroupIdsByUserId(@PathVariable("id") Long userId){
+        List<UserGroupVO> data = tDeviceGroupService.selectGroupIdsByUserId(userId);
 
+        return Result.ok(data);
+    }
+    @GetMapping("get/device/{id}")
+    @Operation(summary = "信息")
+    public Result<List<UserDeviceVO>> selectDevicesByGroupId(@PathVariable("id") Long groupId){
+        List<UserDeviceVO> data = tDeviceGroupService.selectDevicesByGroupId(groupId);
+
+        return Result.ok(data);
+    }
     @PostMapping
     @Operation(summary = "保存")
     @OperateLog(type = OperateTypeEnum.INSERT)
