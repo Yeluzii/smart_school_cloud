@@ -19,6 +19,10 @@ import net.maku.system.enums.DataScopeEnum;
 @TableName("sys_role")
 public class SysRoleEntity extends BaseEntity {
     /**
+     * 角色ID
+     */
+    private Long id;
+    /**
      * 角色名称
      */
     private String name;
