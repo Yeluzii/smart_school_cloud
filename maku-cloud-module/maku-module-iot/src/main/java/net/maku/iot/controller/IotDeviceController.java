@@ -53,6 +53,7 @@ public class IotDeviceController {
     @Operation(summary = "保存")
     @PreAuthorize("hasAuthority('iot:device:save')")
     public Result<String> save(@RequestBody IotDeviceVO vo) {
+
         iotDeviceService.save(vo);
 
         return Result.ok();
