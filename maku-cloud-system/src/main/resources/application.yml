@@ -22,7 +22,7 @@ spring:
     host: tcp://117.72.93.22:1883
     username: admin
     password: public
-    clientId: springboot-server1234
+    clientId: springboot-server8855
     default-topic: iot/device/#
 
 #storage:
