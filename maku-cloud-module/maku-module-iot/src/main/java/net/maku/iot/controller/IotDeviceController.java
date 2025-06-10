@@ -108,4 +108,13 @@ public class IotDeviceController {
         return Result.ok();
     }
 
+    @GetMapping("/alear/{tenantId}")
+    @Operation(summary = "根据租户ID获取设备列表")
+//    @PreAuthorize("hasAuthority('sys:alert:viewDevices')")
+    public Result<List<IotDeviceEntity>> getDevicesByTenantId(@PathVariable("tenantId") Long tenantId) {
+        List<IotDeviceEntity> devices = iotDeviceService.getDevicesByTenantId(tenantId);
+        return Result.ok(devices);
+    }
+
+
 }
