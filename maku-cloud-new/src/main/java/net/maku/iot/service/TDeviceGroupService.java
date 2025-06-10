@@ -6,6 +6,9 @@ import net.maku.iot.vo.DeviceVO;
 import net.maku.iot.vo.TDeviceGroupVO;
 import net.maku.iot.query.TDeviceGroupQuery;
 import net.maku.iot.entity.TDeviceGroupEntity;
+import net.maku.iot.vo.UserDeviceVO;
+import net.maku.iot.vo.UserGroupVO;
+
 import java.util.List;
 
 /**
@@ -19,10 +22,10 @@ public interface TDeviceGroupService extends BaseService<TDeviceGroupEntity> {
     PageResult<TDeviceGroupVO> page(TDeviceGroupQuery query);
 
     List<TDeviceGroupVO> get(Long id);
-
+    List<UserGroupVO> selectGroupIdsByUserId(Long userId);
     List<DeviceVO> selectDeviceIdsByGroupId(Long groupId);
     void save(TDeviceGroupVO vo);
-
+    List<UserDeviceVO> selectDevicesByGroupId(Long groupId);
     void update(TDeviceGroupVO vo);
 
     void delete(List<Long> idList);
