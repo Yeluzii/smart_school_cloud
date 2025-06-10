@@ -13,6 +13,8 @@ import net.maku.iot.vo.DeviceVO;
 import net.maku.iot.vo.TDeviceGroupVO;
 import net.maku.iot.dao.TDeviceGroupDao;
 import net.maku.iot.service.TDeviceGroupService;
+import net.maku.iot.vo.UserDeviceVO;
+import net.maku.iot.vo.UserGroupVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +53,11 @@ public class TDeviceGroupServiceImpl extends BaseServiceImpl<TDeviceGroupDao, TD
     }
 
     @Override
+    public List<UserGroupVO> selectGroupIdsByUserId(Long userId) {
+        return baseMapper.selectGroupIdsByUserId(userId);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(TDeviceGroupVO vo) {
         TDeviceGroupEntity entity = TDeviceGroupConvert.INSTANCE.convert(vo);
@@ -59,6 +66,12 @@ public class TDeviceGroupServiceImpl extends BaseServiceImpl<TDeviceGroupDao, TD
 
 
     }
+
+    @Override
+    public List<UserDeviceVO> selectDevicesByGroupId(Long groupId) {
+        return List.of();
+    }
+
     @Override
     public List<DeviceVO> selectDeviceIdsByGroupId(Long groupId){
         return baseMapper.selectDeviceIdsByGroupId(groupId);

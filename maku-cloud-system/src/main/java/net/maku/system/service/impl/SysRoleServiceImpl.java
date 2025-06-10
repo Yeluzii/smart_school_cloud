@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
 import net.maku.system.convert.SysRoleConvert;
@@ -29,6 +30,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleDao, SysRoleEntity> implements SysRoleService {
     private final SysRoleMenuService sysRoleMenuService;
     private final SysRoleDataScopeService sysRoleDataScopeService;
@@ -45,6 +47,10 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleDao, SysRoleEntit
     @Override
     public List<SysRoleVO> getList(SysRoleQuery query) {
         List<SysRoleEntity> entityList = baseMapper.selectList(getWrapper(query));
+        List<Long> roleIdList = baseMapper.getPackageRoleIds();
+        // 移除前两个元素
+        entityList = entityList.subList(2, entityList.size());
+        entityList = entityList.stream().filter(item -> !roleIdList.contains(item.getId())).toList();
 
         return SysRoleConvert.INSTANCE.convertList(entityList);
     }
