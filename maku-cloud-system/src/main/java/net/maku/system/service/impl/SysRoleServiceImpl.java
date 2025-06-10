@@ -47,10 +47,11 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleDao, SysRoleEntit
     @Override
     public List<SysRoleVO> getList(SysRoleQuery query) {
         List<SysRoleEntity> entityList = baseMapper.selectList(getWrapper(query));
-        entityList.forEach(entity -> log.info("role: {}", entity.toString()));
-        entityList.remove(0);
-        entityList.remove(1);
-        entityList.forEach(entity -> log.info("role: {}", entity.toString()));
+        List<Long> roleIdList = baseMapper.getPackageRoleIds();
+        // 移除前两个元素
+        entityList = entityList.subList(2, entityList.size());
+        entityList = entityList.stream().filter(item -> !roleIdList.contains(item.getId())).toList();
+
         return SysRoleConvert.INSTANCE.convertList(entityList);
     }
 
