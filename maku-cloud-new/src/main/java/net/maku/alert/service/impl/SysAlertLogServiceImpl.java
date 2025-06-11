@@ -57,5 +57,18 @@ public class SysAlertLogServiceImpl extends BaseServiceImpl<SysAlertLogDao, SysA
         return baseMapper.getAlertLogList();
     }
 
+    @Override
+    public List<AlertLogVO> getAlertLogVO(Long deviceId) {
+        return baseMapper.getAlertLog(deviceId);
+    }
+
+    @Override
+    public void save(Long deviceId, Object info) {
+        SysAlertLogEntity entity = new SysAlertLogEntity();
+        entity.setDeviceId(deviceId);
+        entity.setAlertInfo(info);
+        baseMapper.insert(entity);
+    }
+
 
 }
