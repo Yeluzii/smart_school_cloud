@@ -21,7 +21,8 @@ public interface SysRoleDao extends BaseDao<SysRoleEntity> {
      * 根据用户ID，获取用户最大的数据范围
      */
     Integer getDataScopeByUserId(@Param("userId") Long userId);
-
+    @Select("SELECT id, name, role_code, remark, data_scope, org_id, tenant_id FROM sys_role where deleted = 0")
+    List<SysRoleEntity> getRoleNameList();
     /**
      * 根据用户ID，获取用户角色编码
      */

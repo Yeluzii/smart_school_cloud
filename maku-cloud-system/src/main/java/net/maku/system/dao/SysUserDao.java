@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Mapper
 public interface SysUserDao extends BaseDao<SysUserEntity> {
-    @Select("SELECT DISTINCT u.password FROM sys_user u INNER JOIN sys_user_role ur ON u.id = ur.user_id WHERE ur.role_id = 1 OR ur.role_id = 2 AND u.username = #{username} AND u.tenant_id = #{tenantId}")
+    @Select("SELECT DISTINCT u.password FROM sys_user u INNER JOIN sys_user_role ur ON u.id = ur.user_id WHERE (ur.role_id = 1 OR ur.role_id = 2) AND u.username = #{username} AND u.tenant_id = #{tenantId}")
     String getUser(Long tenantId, String username);
 
     List<SysUserEntity> getList(Map<String, Object> params);

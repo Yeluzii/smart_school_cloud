@@ -67,9 +67,10 @@ public class TDeviceGroupServiceImpl extends BaseServiceImpl<TDeviceGroupDao, TD
 
     }
 
+
     @Override
     public List<UserDeviceVO> selectDevicesByGroupId(Long groupId) {
-        return List.of();
+        return baseMapper.selectDevicesByGroupId(groupId);
     }
 
     @Override
@@ -91,6 +92,11 @@ public class TDeviceGroupServiceImpl extends BaseServiceImpl<TDeviceGroupDao, TD
     public void delete(List<Long> idList) {
         removeByIds(idList);
 
+    }
+
+    @Override
+    public Integer getDeviceType(Long deviceId) {
+        return baseMapper.getDeviceType(deviceId);
     }
 
     @Override

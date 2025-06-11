@@ -118,7 +118,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
         if (user != null) {
             throw new ServerException("手机号已经存在");
         }
-
+        entity.setTenantId(Objects.requireNonNull(SecurityUser.getUser()).getTenantId());
         // 保存用户
         baseMapper.insert(entity);
 

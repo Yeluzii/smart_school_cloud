@@ -29,6 +29,6 @@ public interface TDeviceGroupService extends BaseService<TDeviceGroupEntity> {
     void update(TDeviceGroupVO vo);
 
     void delete(List<Long> idList);
-
+    Integer getDeviceType(Long deviceId);
     void batchSave(List<Long> devieceIdList, Long groupId);
 }

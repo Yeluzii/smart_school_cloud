@@ -29,7 +29,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TDeviceGroupController {
     private final TDeviceGroupService tDeviceGroupService;
-
     @GetMapping("page")
     @Operation(summary = "分页")
     @PreAuthorize("hasAuthority('iot:group:device:page')")
@@ -48,7 +47,13 @@ public class TDeviceGroupController {
 
         return Result.ok(data);
     }
+    @GetMapping("get/devicetype")
+    @Operation(summary = "信息")
+    public Result<Integer> getDeviceType(@RequestParam("deviceId") Long deviceId){
+        Integer data = tDeviceGroupService.getDeviceType(deviceId);
 
+        return Result.ok(data);
+    }
     @GetMapping("get/{id}")
     @Operation(summary = "信息")
     @PreAuthorize("hasAuthority('iot:group:device:get')")
@@ -57,16 +62,16 @@ public class TDeviceGroupController {
 
         return Result.ok(data);
     }
-    @GetMapping("get/group/{id}")
-    @Operation(summary = "信息")
-    public Result<List<UserGroupVO>> selectGroupIdsByUserId(@PathVariable("id") Long userId){
+    @GetMapping("get/group")
+    @Operation(summary = "分组")
+    public Result<List<UserGroupVO>> selectGroupIdsByUserId(@RequestParam("userId") Long userId){
         List<UserGroupVO> data = tDeviceGroupService.selectGroupIdsByUserId(userId);
 
         return Result.ok(data);
     }
-    @GetMapping("get/device/{id}")
-    @Operation(summary = "信息")
-    public Result<List<UserDeviceVO>> selectDevicesByGroupId(@PathVariable("id") Long groupId){
+    @GetMapping("get/device")
+    @Operation(summary = "设备")
+    public Result<List<UserDeviceVO>> selectDevicesByGroupId(@RequestParam("groupId") Long groupId){
         List<UserDeviceVO> data = tDeviceGroupService.selectDevicesByGroupId(groupId);
 
         return Result.ok(data);
