@@ -38,6 +38,13 @@ spring:
             - Path=/app_iot/**
           filters:
             - StripPrefix=1
+        - id: screen
+          uri: lb://screen
+          order: 3
+          predicates:
+            - Path=/screen/**
+          filters:
+            - StripPrefix=1
     nacos:
       username: @nacos.username@
       password: @nacos.password@
