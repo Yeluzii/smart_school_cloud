@@ -39,7 +39,7 @@ public class DeviceController {
     @Operation(summary = "获取指定设备")
     public Result<DeviceVO> getDevice(@PathVariable String deviceId){
         QueryWrapper<Device> query = new QueryWrapper<>();
-        query.eq("device_id",deviceId);
+        query.eq("id",deviceId);
         Device device = deviceService.getOne(query);
         return Result.ok(DeviceConvert.INSTANCE.convert(device));
     }

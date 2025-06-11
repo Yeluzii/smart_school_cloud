@@ -107,16 +107,30 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
             JSONObject json = JSON.parseObject(payload);
             String uid = json.getString("uid");
             Boolean runningStatus = json.getBoolean("running_status");
+            Boolean door = json.getBoolean("door");
+            Boolean fan = json.getBoolean("fan");
             Float temperature = json.getFloat("temperature");
             Float humidity = json.getFloat("humidity");
             // 更新数据库状态
             UpdateWrapper<Device> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("uid", uid)
-                    .set("running_status", runningStatus)
-                    .set("temperature", temperature)
-                    .set("humidity", humidity);
+            updateWrapper.eq("uid", uid);
+            if (runningStatus != null) {
+                updateWrapper.set("running_status", runningStatus);
+            }
+            if (temperature != null){
+                updateWrapper.set("temperature", temperature);
+            }
+            if (humidity != null){
+                updateWrapper.set("humidity", humidity);
+            }
+            if (door != null){
+                updateWrapper.set("door", door);
+            }
+            if (fan != null){
+                updateWrapper.set("fan", fan);
+            }
             baseMapper.update(null, updateWrapper);
-            log.info("设备状态更新：{} -> {},{},{}", uid, runningStatus,temperature,humidity);
+            log.info("设备状态更新：{} -> {},{},{},{},{}", uid, runningStatus,temperature,humidity,fan,door);
         } catch (Exception e) {
             e.printStackTrace();
         }
