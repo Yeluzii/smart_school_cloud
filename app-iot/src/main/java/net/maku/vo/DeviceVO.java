@@ -26,6 +26,12 @@ public class DeviceVO implements Serializable {
     private String uid;
     @Schema(description = "温度")
     private Float temperature;
+    @Schema(description = "湿度")
+    private Float humidity;
+    @Schema(description = "门的开关状态")
+    private Boolean door;
+    @Schema(description = "风扇的开关状态")
+    private Boolean fan;
     @Schema(description = "设备状态")
     private Boolean runningStatus;
 }
