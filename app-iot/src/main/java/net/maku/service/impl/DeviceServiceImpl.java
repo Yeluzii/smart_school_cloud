@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import net.maku.convert.DeviceConvert;
 import net.maku.dao.DeviceDao;
 import net.maku.entity.Device;
+import net.maku.framework.common.cache.RedisCache;
 import net.maku.framework.common.constant.Constant;
 import net.maku.framework.common.exception.ServerException;
 import net.maku.framework.common.utils.PageResult;
@@ -33,6 +34,7 @@ import java.util.Map;
 public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implements DeviceService {
     private final MessageChannel mqttOutboundChannel;
     private final DeviceDao deviceDao;
+    private final RedisCache redisCache;
     @Override
     public PageResult<DeviceVO> page(DeviceQuery query) {
         Map<String, Object> params = getParams(query);
@@ -111,6 +113,22 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
             Boolean fan = json.getBoolean("fan");
             Float temperature = json.getFloat("temperature");
             Float humidity = json.getFloat("humidity");
+            QueryWrapper<Device> query = new QueryWrapper<>();
+            query.eq("uid", uid);
+            Device device = deviceDao.selectOne(query);
+            DeviceVO deviceData = new DeviceVO();
+            deviceData.setId(device.getId());
+            deviceData.setCode(device.getCode());
+            deviceData.setName(device.getName());
+            deviceData.setType(device.getType());
+            deviceData.setUid(uid);
+            deviceData.setTemperature(temperature);
+            deviceData.setHumidity(humidity);
+            deviceData.setDoor(door);
+            deviceData.setFan(fan);
+            deviceData.setRunningStatus(runningStatus);
+            // 更新redis状态
+            redisCache.set(uid,deviceData);
             // 更新数据库状态
             UpdateWrapper<Device> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("uid", uid);

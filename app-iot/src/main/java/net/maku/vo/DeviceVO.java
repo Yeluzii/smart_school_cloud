@@ -32,6 +32,6 @@ public class DeviceVO implements Serializable {
     private Boolean door;
     @Schema(description = "风扇的开关状态")
     private Boolean fan;
-    @Schema(description = "设备状态")
+    @Schema(description = "设备在线状态")
     private Boolean runningStatus;
 }
