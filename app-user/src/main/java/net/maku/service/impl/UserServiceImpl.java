@@ -12,6 +12,7 @@ import net.maku.framework.security.utils.TokenUtils;
 import net.maku.service.UserService;
 import net.maku.vo.UserVO;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl extends BaseServiceImpl<UserDao, UserEntity> implements UserService {
     private final TokenStoreCache tokenStoreCache;
     private final PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private UserDao userDao;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(UserDTO dto) {
@@ -63,5 +65,17 @@ public class UserServiceImpl extends BaseServiceImpl<UserDao, UserEntity> implem
     public UserVO getById(Long id) {
         UserEntity user = baseMapper.getById(id);
         return UserConvert.INSTANCE.convert(user);
+    }
+
+    @Override
+    @Transactional
+    public boolean changePassword(Long userId, String newPassword) {
+        UserEntity user = userDao.getById(userId);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userDao.updateById(user);
+            return true;
+        }
+        return false;
     }
 }
