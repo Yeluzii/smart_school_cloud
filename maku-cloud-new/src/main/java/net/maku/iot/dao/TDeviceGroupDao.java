@@ -5,9 +5,7 @@ import net.maku.iot.entity.TDeviceGroupEntity;
 import net.maku.iot.vo.DeviceVO;
 import net.maku.iot.vo.UserDeviceVO;
 import net.maku.iot.vo.UserGroupVO;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -27,4 +25,6 @@ public interface TDeviceGroupDao extends BaseDao<TDeviceGroupEntity> {
     List<UserDeviceVO> selectDevicesByGroupId(@Param("groupId") Long groupId);
     @Select("SELECT type FROM iot_device WHERE id = #{deviceId} AND deleted = 0")
     Integer getDeviceType(@Param("deviceId") Long deviceId);
+    @Update("update t_device_group set deleted = 1 WHERE group_id = #{groupId} AND device_id = #{deviceId}")
+    void deleteData(@Param("groupId") Long groupId,  @Param("deviceId") Long deviceId);
 }

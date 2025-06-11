@@ -101,4 +101,5 @@ public class MonitorController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "消息发送失败"));
         }
     }
+
 }

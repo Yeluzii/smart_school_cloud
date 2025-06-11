@@ -96,6 +96,14 @@ public class TRoleGroupController {
 
         return Result.ok();
     }
+    @DeleteMapping("delete")
+    @Operation(summary = "删除")
+    @OperateLog(type = OperateTypeEnum.DELETE)
+    @PreAuthorize("hasAuthority('iot:group:device:delete')")
+    public Result<String> deleteData(@RequestParam("groupId") Long groupId,@RequestParam("roleId") Long roleId){
+        tRoleGroupService.deleteData(groupId, roleId);
 
+        return Result.ok();
+    }
 
 }

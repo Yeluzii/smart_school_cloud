@@ -95,6 +95,11 @@ public class TDeviceGroupServiceImpl extends BaseServiceImpl<TDeviceGroupDao, TD
     }
 
     @Override
+    public void deleteData(Long deviceId,  Long groupId) {
+        baseMapper.deleteData(deviceId, groupId);
+    }
+
+    @Override
     public Integer getDeviceType(Long deviceId) {
         return baseMapper.getDeviceType(deviceId);
     }

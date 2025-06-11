@@ -85,7 +85,10 @@ public class TRoleGroupServiceImpl extends BaseServiceImpl<TRoleGroupDao, TRoleG
         removeByIds(idList);
 
     }
-
+    @Override
+    public void deleteData(Long groupId,  Long roleId) {
+        baseMapper.deleteData(groupId, roleId);
+    }
     @Override
     public void batchSave(List<Long> roleIdList , Long groupId) {
         List<TRoleGroupEntity> list = roleIdList.stream().map(roleId -> {
