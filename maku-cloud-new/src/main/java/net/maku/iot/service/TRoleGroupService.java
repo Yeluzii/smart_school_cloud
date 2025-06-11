@@ -27,5 +27,5 @@ public interface TRoleGroupService extends BaseService<TRoleGroupEntity> {
     void update(TRoleGroupVO vo);
 
     void delete(List<Long> idList);
-
+    void deleteData(Long groupId, Long deviceId);
 }

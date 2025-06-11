@@ -115,5 +115,14 @@ public class TDeviceGroupController {
         return Result.ok();
     }
 
+    @DeleteMapping("delete")
+    @Operation(summary = "删除")
+    @OperateLog(type = OperateTypeEnum.DELETE)
+    @PreAuthorize("hasAuthority('iot:group:device:delete')")
+    public Result<String> deleteData(@RequestParam("groupId") Long groupId,@RequestParam("deviceId") Long deviceId){
+        tDeviceGroupService.deleteData(groupId, deviceId);
+
+        return Result.ok();
+    }
 
 }
