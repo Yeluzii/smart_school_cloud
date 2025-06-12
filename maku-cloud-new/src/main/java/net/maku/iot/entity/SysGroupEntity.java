@@ -24,8 +24,6 @@ public class SysGroupEntity extends BaseEntity {
 	private String name;
 
 
-
-
 	@TableField(value = "tenant_id")
 	private Long tenantId;
 

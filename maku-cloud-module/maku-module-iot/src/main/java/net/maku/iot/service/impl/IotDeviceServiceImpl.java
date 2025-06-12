@@ -5,6 +5,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.exception.ServerException;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
+import net.maku.framework.security.user.SecurityUser;
 import net.maku.iot.convert.IotDeviceConvert;
 import net.maku.iot.dao.IotDeviceDao;
 import net.maku.iot.entity.IotDeviceEntity;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 设备服务类
@@ -67,7 +70,7 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<IotDeviceDao, IotDevic
     @Override
     public void save(IotDeviceVO vo) {
         IotDeviceEntity entity = IotDeviceConvert.INSTANCE.convert(vo);
-
+        entity.setTenantId(Objects.requireNonNull(SecurityUser.getUser()).getTenantId());
         baseMapper.insert(entity);
     }
 
@@ -82,6 +85,13 @@ public class IotDeviceServiceImpl extends BaseServiceImpl<IotDeviceDao, IotDevic
     @Transactional(rollbackFor = Exception.class)
     public void delete(List<Long> idList) {
         removeByIds(idList);
+    }
+
+    @Override
+    public List<IotDeviceEntity> getDevicesByTenantId(Long tenantId) {
+        QueryWrapper<IotDeviceEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("tenant_id", tenantId);
+        return baseMapper.selectList(wrapper);
     }
 
     @Override

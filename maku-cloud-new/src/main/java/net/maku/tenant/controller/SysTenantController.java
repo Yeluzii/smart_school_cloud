@@ -7,8 +7,11 @@ import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.common.utils.Result;
 import net.maku.framework.operatelog.annotations.OperateLog;
 import net.maku.framework.operatelog.enums.OperateTypeEnum;
+import net.maku.tenant.dto.SysTenantDTO;
+import net.maku.tenant.dto.UpdatePasswordDTO;
 import net.maku.tenant.service.SysTenantService;
 import net.maku.tenant.query.SysTenantQuery;
+import net.maku.tenant.service.SysUserService;
 import net.maku.tenant.vo.SysTenantVO;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +31,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SysTenantController {
     private final SysTenantService sysTenantService;
+    private final SysUserService sysUserService;
 
     @GetMapping("page")
     @Operation(summary = "分页")
@@ -52,8 +56,8 @@ public class SysTenantController {
     @Operation(summary = "保存")
     @OperateLog(type = OperateTypeEnum.INSERT)
     @PreAuthorize("hasAuthority('business:tenant:save')")
-    public Result<String> save(@RequestBody SysTenantVO vo){
-        sysTenantService.save(vo);
+    public Result<String> save(@RequestBody SysTenantDTO dto){
+        sysTenantService.save(dto);
 
         return Result.ok();
     }
@@ -62,8 +66,8 @@ public class SysTenantController {
     @Operation(summary = "修改")
     @OperateLog(type = OperateTypeEnum.UPDATE)
     @PreAuthorize("hasAuthority('business:tenant:update')")
-    public Result<String> update(@RequestBody @Valid SysTenantVO vo){
-        sysTenantService.update(vo);
+    public Result<String> update(@RequestBody @Valid SysTenantDTO dto){
+        sysTenantService.update(dto);
 
         return Result.ok();
     }
@@ -78,5 +82,12 @@ public class SysTenantController {
         return Result.ok();
     }
 
+    @PostMapping("password")
+    @Operation(summary = "修改密码")
+    public Result<String> updatePassword(@RequestBody UpdatePasswordDTO dto){
+        sysTenantService.updatePassword(dto);
+        sysUserService.updateUserPassword(dto);
+        return Result.ok();
+    }
 
 }

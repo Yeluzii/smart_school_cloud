@@ -21,6 +21,9 @@
 		<if test="gender != null">
 			and t1.gender = #{gender}
 		</if>
+		<if test="tenantId != null">
+			and t1.tenant_id = #{tenantId}
+		</if>
 	</select>
 
 	<select id="getById" resultType="net.maku.system.entity.SysUserEntity">

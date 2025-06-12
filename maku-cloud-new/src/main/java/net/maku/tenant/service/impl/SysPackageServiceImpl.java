@@ -1,5 +1,6 @@
 package net.maku.tenant.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -27,6 +28,16 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class SysPackageServiceImpl extends BaseServiceImpl<SysPackageDao, SysPackageEntity> implements SysPackageService {
+
+    @Override
+    public List<SysPackageVO> getPackageList(String name) {
+        QueryWrapper<SysPackageEntity> queryWrapper = new QueryWrapper<>();
+        if (name != null && !name.isEmpty()) {
+            queryWrapper.eq("tenant_name", name);
+        }
+        List<SysPackageEntity> sysPackageEntities = baseMapper.selectList(queryWrapper);
+        return SysPackageConvert.INSTANCE.convertList(sysPackageEntities);
+    }
 
     @Override
     public PageResult<SysPackageVO> page(SysPackageQuery query) {

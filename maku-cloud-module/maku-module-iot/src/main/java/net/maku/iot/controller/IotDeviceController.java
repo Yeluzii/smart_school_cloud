@@ -53,6 +53,7 @@ public class IotDeviceController {
     @Operation(summary = "保存")
     @PreAuthorize("hasAuthority('iot:device:save')")
     public Result<String> save(@RequestBody IotDeviceVO vo) {
+
         iotDeviceService.save(vo);
 
         return Result.ok();
@@ -106,5 +107,14 @@ public class IotDeviceController {
         iotDeviceService.simulateDeviceReportAttributeData(vo);
         return Result.ok();
     }
+
+    @GetMapping("/alear/{tenantId}")
+    @Operation(summary = "根据租户ID获取设备列表")
+//    @PreAuthorize("hasAuthority('sys:alert:viewDevices')")
+    public Result<List<IotDeviceEntity>> getDevicesByTenantId(@PathVariable("tenantId") Long tenantId) {
+        List<IotDeviceEntity> devices = iotDeviceService.getDevicesByTenantId(tenantId);
+        return Result.ok(devices);
+    }
+
 
 }

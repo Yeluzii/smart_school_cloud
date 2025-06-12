@@ -14,6 +14,7 @@ import java.util.List;
  * <a href="https://maku.net">MAKU</a>
  */
 public interface SysPackageService extends BaseService<SysPackageEntity> {
+    List<SysPackageVO> getPackageList(String name);
 
     PageResult<SysPackageVO> page(SysPackageQuery query);
 

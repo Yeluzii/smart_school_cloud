@@ -19,6 +19,7 @@ import java.util.List;
  * <a href="https://maku.net">MAKU</a>
  */
 public interface SysUserService extends BaseService<SysUserEntity> {
+    boolean isAdmin(Long tenantId, String username, String password);
 
     PageResult<SysUserVO> page(SysUserQuery query);
 

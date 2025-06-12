@@ -1,5 +1,6 @@
 package net.maku.tenant.convert;
 
+import net.maku.tenant.dto.SysTenantDTO;
 import net.maku.tenant.entity.SysTenantEntity;
 import net.maku.tenant.vo.SysTenantVO;
 import org.mapstruct.Mapper;
@@ -18,6 +19,8 @@ public interface SysTenantConvert {
     SysTenantConvert INSTANCE = Mappers.getMapper(SysTenantConvert.class);
 
     SysTenantEntity convert(SysTenantVO vo);
+
+    SysTenantEntity convert(SysTenantDTO dto);
 
     SysTenantVO convert(SysTenantEntity entity);
 

@@ -33,6 +33,11 @@ public class SysPackageController {
     private final SysPackageService sysPackageService;
     private final RoleService  roleService;
 
+    @GetMapping("packageList")
+    public Result<List<SysPackageVO>> getPackageList(@RequestParam(required = false) String name){
+        return Result.ok(sysPackageService.getPackageList(name));
+    }
+
     @GetMapping("roleList")
     public Result<List<RoleVO>> roleList(@RequestParam(required = false) String name){
         return Result.ok(roleService.getRoleList(name));

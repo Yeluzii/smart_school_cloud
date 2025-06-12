@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
 import net.maku.system.convert.SysRoleConvert;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 角色
@@ -29,6 +31,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleDao, SysRoleEntity> implements SysRoleService {
     private final SysRoleMenuService sysRoleMenuService;
     private final SysRoleDataScopeService sysRoleDataScopeService;
@@ -44,9 +47,27 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRoleDao, SysRoleEntit
 
     @Override
     public List<SysRoleVO> getList(SysRoleQuery query) {
-        List<SysRoleEntity> entityList = baseMapper.selectList(getWrapper(query));
+        List<SysRoleEntity> entityList = baseMapper.getRoleNameList();
+        entityList.forEach(item -> log.info("原始角色 - roleId: {}, roleName: {}", item.getId(), item.getName()));
 
-        return SysRoleConvert.INSTANCE.convertList(entityList);
+        List<Long> roleIdList = baseMapper.getPackageRoleIds();
+        log.info("需要排除的角色ID列表: {}", roleIdList);
+
+// 执行过滤（排除packageRoleIds列表中的角色）
+        List<SysRoleEntity> filteredList = entityList.stream()
+                .filter(item -> !roleIdList.contains(item.getId()))
+                .collect(Collectors.toList());
+
+// 调试：检查过滤后结果
+        filteredList.forEach(item -> log.info("过滤后角色 - roleId: {}, roleName: {}", item.getId(), item.getName()));
+
+// 如果需要额外过滤掉ID为1和2的角色
+        filteredList = filteredList.stream()
+                .filter(item -> item.getId() != 1L && item.getId() != 2L)
+                .collect(Collectors.toList());
+
+        log.info("最终角色数量: {}", filteredList.size());
+        return SysRoleConvert.INSTANCE.convertList(filteredList);
     }
 
     private Wrapper<SysRoleEntity> getWrapper(SysRoleQuery query) {

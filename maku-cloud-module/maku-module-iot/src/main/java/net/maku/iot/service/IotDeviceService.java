@@ -28,6 +28,8 @@ public interface IotDeviceService extends BaseService<IotDeviceEntity> {
 
     void delete(List<Long> idList);
 
+    List<IotDeviceEntity> getDevicesByTenantId(Long tenantId);
+
     /**
      * 根据设备的协议类型获取发送服务
      * @param device 设备

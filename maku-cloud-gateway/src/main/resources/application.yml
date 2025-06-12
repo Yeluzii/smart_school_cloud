@@ -26,9 +26,23 @@ spring:
             - StripPrefix=1
         - id: app-user
           uri: lb://app-user
-          order: 2
+          order: 3
           predicates:
             - Path=/app/**
+          filters:
+            - StripPrefix=1
+        - id: app-iot
+          uri: lb://app-iot
+          order: 2
+          predicates:
+            - Path=/app_iot/**
+          filters:
+            - StripPrefix=1
+        - id: screen
+          uri: lb://screen
+          order: 3
+          predicates:
+            - Path=/screen/**
           filters:
             - StripPrefix=1
     nacos:
