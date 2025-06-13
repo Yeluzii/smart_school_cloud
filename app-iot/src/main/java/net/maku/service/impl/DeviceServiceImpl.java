@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import net.maku.convert.DeviceConvert;
 import net.maku.dao.DeviceDao;
 import net.maku.entity.Device;
+import net.maku.feign.AlertLogService;
 import net.maku.framework.common.cache.RedisCache;
 import net.maku.framework.common.constant.Constant;
 import net.maku.framework.common.exception.ServerException;
@@ -15,6 +16,7 @@ import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
 import net.maku.query.DeviceQuery;
 import net.maku.service.DeviceService;
+import net.maku.vo.AlertLogVO;
 import net.maku.vo.DeviceVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
     private final MessageChannel mqttOutboundChannel;
     private final DeviceDao deviceDao;
     private final RedisCache redisCache;
+    private final AlertLogService alertLogService;
     @Override
     public PageResult<DeviceVO> page(DeviceQuery query) {
         Map<String, Object> params = getParams(query);
@@ -117,16 +120,18 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
             query.eq("uid", uid);
             Device device = deviceDao.selectOne(query);
             DeviceVO deviceData = new DeviceVO();
-            deviceData.setId(device.getId());
-            deviceData.setCode(device.getCode());
-            deviceData.setName(device.getName());
-            deviceData.setType(device.getType());
-            deviceData.setUid(uid);
-            deviceData.setTemperature(temperature);
-            deviceData.setHumidity(humidity);
-            deviceData.setDoor(door);
-            deviceData.setFan(fan);
-            deviceData.setRunningStatus(runningStatus);
+            if (device != null){
+                deviceData.setId(device.getId());
+                deviceData.setCode(device.getCode());
+                deviceData.setName(device.getName());
+                deviceData.setType(device.getType());
+                deviceData.setUid(uid);
+                deviceData.setTemperature(temperature);
+                deviceData.setHumidity(humidity);
+                deviceData.setDoor(door);
+                deviceData.setFan(fan);
+                deviceData.setRunningStatus(runningStatus);
+            }
             // 更新redis状态
             redisCache.set(uid,deviceData);
             // 更新数据库状态
@@ -137,6 +142,12 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
             }
             if (temperature != null){
                 updateWrapper.set("temperature", temperature);
+                // 新增温度告警
+                if (temperature > 29){
+                    assert device != null;
+                    alertLogService.addAlertLog(device.getId(),json);
+                    List<AlertLogVO> logs = alertLogService.getSysAlertLogByDeviceId(device.getId()).getData();
+                }
             }
             if (humidity != null){
                 updateWrapper.set("humidity", humidity);

@@ -1,14 +1,50 @@
-version: '3.9'
+#构建：docker-compose build
+#启动：docker-compose up -d
+
 services:
   maku-cloud-gateway:
-    image: makunet:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: maku-cloud-gateway.jar
+    image: maku-cloud-gateway:1.0
     container_name: maku-cloud-gateway
     ports:
       - 8080:8080
-    volumes:
-      - /work/www/maku-cloud/maku-cloud-gateway.jar:/app/app.jar
+
   maku-cloud-system:
-    image: makunet:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: maku-cloud-system.jar
+    image: maku-cloud-system:1.0
     container_name: maku-cloud-system
-    volumes:
-      - /work/www/maku-cloud/maku-cloud-system.jar:/app/app.jar
+
+  app-user:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: app-user.jar
+    image: app-user:1.0
+    container_name: app-user
+
+  app-iot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: app-iot.jar
+    image: app-iot:1.0
+    container_name: app-iot
+
+  maku-cloud-new:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: maku-cloud-new.jar
+    image: maku-cloud-new:1.0
+    container_name: maku-cloud-new
