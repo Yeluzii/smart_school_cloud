@@ -120,16 +120,18 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
             query.eq("uid", uid);
             Device device = deviceDao.selectOne(query);
             DeviceVO deviceData = new DeviceVO();
-            deviceData.setId(device.getId());
-            deviceData.setCode(device.getCode());
-            deviceData.setName(device.getName());
-            deviceData.setType(device.getType());
-            deviceData.setUid(uid);
-            deviceData.setTemperature(temperature);
-            deviceData.setHumidity(humidity);
-            deviceData.setDoor(door);
-            deviceData.setFan(fan);
-            deviceData.setRunningStatus(runningStatus);
+            if (device != null){
+                deviceData.setId(device.getId());
+                deviceData.setCode(device.getCode());
+                deviceData.setName(device.getName());
+                deviceData.setType(device.getType());
+                deviceData.setUid(uid);
+                deviceData.setTemperature(temperature);
+                deviceData.setHumidity(humidity);
+                deviceData.setDoor(door);
+                deviceData.setFan(fan);
+                deviceData.setRunningStatus(runningStatus);
+            }
             // 更新redis状态
             redisCache.set(uid,deviceData);
             // 更新数据库状态
@@ -142,6 +144,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
                 updateWrapper.set("temperature", temperature);
                 // 新增温度告警
                 if (temperature > 29){
+                    assert device != null;
                     alertLogService.addAlertLog(device.getId(),json);
                     List<AlertLogVO> logs = alertLogService.getSysAlertLogByDeviceId(device.getId()).getData();
                 }
