@@ -124,6 +124,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
                 updateWrapper.set("humidity", humidity);
             }
             if (door != null){
+
                 updateWrapper.set("door", door);
             }
             if (fan != null){
