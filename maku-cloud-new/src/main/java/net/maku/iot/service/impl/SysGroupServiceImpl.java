@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
+import net.maku.framework.security.user.SecurityUser;
 import net.maku.iot.convert.SysGroupConvert;
 import net.maku.iot.entity.SysGroupEntity;
 import net.maku.iot.query.SysGroupQuery;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * group
@@ -36,7 +38,7 @@ public class SysGroupServiceImpl extends BaseServiceImpl<SysGroupDao, SysGroupEn
     }
 
 
-    private LambdaQueryWrapper<SysGroupEntity> getWrapper(SysGroupQuery query){
+    private LambdaQueryWrapper<SysGroupEntity> getWrapper(SysGroupQuery query) {
         LambdaQueryWrapper<SysGroupEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(ObjectUtil.isNotEmpty(query.getName()), SysGroupEntity::getName, query.getName());
         wrapper.eq(ObjectUtil.isNotEmpty(query.getTenantId()), SysGroupEntity::getTenantId, query.getTenantId());
@@ -58,7 +60,7 @@ public class SysGroupServiceImpl extends BaseServiceImpl<SysGroupDao, SysGroupEn
     @Transactional(rollbackFor = Exception.class)
     public void save(SysGroupVO vo) {
         SysGroupEntity entity = SysGroupConvert.INSTANCE.convert(vo);
-
+        entity.setTenantId(Objects.requireNonNull(SecurityUser.getUser()).getTenantId());
         baseMapper.insert(entity);
 
 
@@ -80,7 +82,6 @@ public class SysGroupServiceImpl extends BaseServiceImpl<SysGroupDao, SysGroupEn
         removeByIds(idList);
 
     }
-
 
 
 }

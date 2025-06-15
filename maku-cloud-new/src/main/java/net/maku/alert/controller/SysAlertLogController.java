@@ -1,5 +1,6 @@
 package net.maku.alert.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -51,11 +52,24 @@ public class SysAlertLogController {
 
 
     @GetMapping("list")
-    @Operation(summary = "分页")
+    @Operation(summary = "列表")
     public Result<List<AlertLogVO>> getAlertLogList(){
         List<AlertLogVO> alertLogList = sysAlertLogService.getAlertLogList();
 
         return Result.ok(alertLogList);
+    }
+
+    @PostMapping("add")
+    @Operation(summary = "添加告警记录")
+    public Result<String> add(@RequestParam Long deviceId, @RequestParam Object info){
+        sysAlertLogService.save(deviceId,info);
+        return Result.ok();
+    }
+
+    @GetMapping("")
+    @Operation(summary = "获取设备")
+    public Result<List<AlertLogVO>> getSysAlertLog(@RequestParam Long deviceId){
+        return Result.ok(sysAlertLogService.getAlertLogVO(deviceId));
     }
 
 

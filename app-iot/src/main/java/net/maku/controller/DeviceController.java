@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import net.maku.convert.DeviceConvert;
 import net.maku.dto.DeviceDTO;
 import net.maku.entity.Device;
+import net.maku.framework.common.cache.RedisCache;
 import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.common.utils.Result;
 import net.maku.query.DeviceQuery;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class DeviceController {
     private final DeviceService deviceService;
+    private final RedisCache redisCache;
+
     @PostMapping("/save")
     @Operation(summary = "新增设备")
     public Result<String> save(@Valid @RequestBody DeviceDTO deviceDto){
@@ -42,6 +45,15 @@ public class DeviceController {
         query.eq("id",deviceId);
         Device device = deviceService.getOne(query);
         return Result.ok(DeviceConvert.INSTANCE.convert(device));
+    }
+
+    @GetMapping("realtime/{deviceId}")
+    @Operation(summary = "获取redis设备状态")
+    public Result<DeviceVO> getRealtimeDevice(@PathVariable String deviceId){
+        QueryWrapper<Device> query = new QueryWrapper<>();
+        query.eq("id",deviceId);
+        String uid = deviceService.getOne(query).getUid();
+        return Result.ok((DeviceVO) redisCache.get(uid));
     }
 
     @PostMapping("/control")

@@ -22,5 +22,8 @@ public interface SysAlertLogService extends BaseService<SysAlertLogEntity> {
 
     List<AlertLogVO> getAlertLogList();
 
+    List<AlertLogVO> getAlertLogVO(Long deviceId);
+
+    void save(Long deviceId, Object info);
 
 }
