@@ -1,14 +1,18 @@
 package net.maku.controller;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.maku.model.WebSocketMessage;
+import net.maku.service.AlertWebSocketServer;
 import net.maku.service.WebSocketServer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,5 +105,19 @@ public class MonitorController {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "消息发送失败"));
         }
     }
-
+    @PostMapping("/alert")
+    public ResponseEntity<JSONObject> checkAndSendAlerts(@RequestParam("uid") String uid,
+                                     @RequestParam(value = "temperature") Float temperature
+                                   ) {
+        JSONObject alert = new JSONObject();
+            log.warn("设备[{}]温度过高告警: {}℃", uid, temperature);
+            alert.put("deviceId", uid);
+            alert.put("alertType", "TEMPERATURE_ALERT");
+            alert.put("alertMessage", "温度过高");
+            alert.put("alertData", temperature);
+            alert.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            AlertWebSocketServer.broadcastMessage(alert);
+//            AlertWebSocketServer.sendMessageToClient(uid, alert);
+        return ResponseEntity.ok(alert);
+    }
 }

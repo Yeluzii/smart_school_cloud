@@ -9,6 +9,7 @@ import net.maku.convert.DeviceConvert;
 import net.maku.dao.DeviceDao;
 import net.maku.entity.Device;
 import net.maku.feign.AlertLogService;
+import net.maku.feign.IotService;
 import net.maku.framework.common.cache.RedisCache;
 import net.maku.framework.common.constant.Constant;
 import net.maku.framework.common.exception.ServerException;
@@ -16,10 +17,10 @@ import net.maku.framework.common.utils.PageResult;
 import net.maku.framework.mybatis.service.impl.BaseServiceImpl;
 import net.maku.query.DeviceQuery;
 import net.maku.service.DeviceService;
-import net.maku.vo.AlertLogVO;
 import net.maku.vo.DeviceVO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -38,6 +40,10 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
     private final DeviceDao deviceDao;
     private final RedisCache redisCache;
     private final AlertLogService alertLogService;
+    private final IotService iotService;
+    private static final Map<String, Float[]> DEVICE_HISTORY = new ConcurrentHashMap<>();
+    private static final float THRESHOLD = 29f;
+
     @Override
     public PageResult<DeviceVO> page(DeviceQuery query) {
         Map<String, Object> params = getParams(query);
@@ -105,6 +111,67 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
     }
 
     // 处理状态上报
+//    @ServiceActivator(inputChannel = "mqttInputChannel")
+//    public void handleStatusMessage(Message<?> message) {
+//        String payload = message.getPayload().toString();
+//        try {
+//            JSONObject json = JSON.parseObject(payload);
+//            String uid = json.getString("uid");
+//            Boolean runningStatus = json.getBoolean("running_status");
+//            Boolean door = json.getBoolean("door");
+//            Boolean fan = json.getBoolean("fan");
+//            Float temperature = json.getFloat("temperature");
+//            Float humidity = json.getFloat("humidity");
+//            QueryWrapper<Device> query = new QueryWrapper<>();
+//            query.eq("uid", uid);
+//            Device device = deviceDao.selectOne(query);
+//            DeviceVO deviceData = new DeviceVO();
+//            if (device != null){
+//                deviceData.setId(device.getId());
+//                deviceData.setCode(device.getCode());
+//                deviceData.setName(device.getName());
+//                deviceData.setType(device.getType());
+//                deviceData.setUid(uid);
+//                deviceData.setTemperature(temperature);
+//                deviceData.setHumidity(humidity);
+//                deviceData.setDoor(door);
+//                deviceData.setFan(fan);
+//                deviceData.setRunningStatus(runningStatus);
+//            }
+//            // 更新redis状态
+//            redisCache.set(uid,deviceData);
+//            // 更新数据库状态
+//            UpdateWrapper<Device> updateWrapper = new UpdateWrapper<>();
+//            updateWrapper.eq("uid", uid);
+//            if (runningStatus != null) {
+//                updateWrapper.set("running_status", runningStatus);
+//            }
+//            if (temperature != null){
+//                updateWrapper.set("temperature", temperature);
+//                // 新增温度告警
+//                if (temperature > 29){
+//                    assert device != null;
+//                    alertLogService.addAlertLog(device.getId(),json);
+//                    List<AlertLogVO> logs = alertLogService.getSysAlertLogByDeviceId(device.getId()).getData();
+//                }
+//            }
+//            if (humidity != null){
+//                updateWrapper.set("humidity", humidity);
+//            }
+//            if (door != null){
+//
+//                updateWrapper.set("door", door);
+//            }
+//            if (fan != null){
+//                updateWrapper.set("fan", fan);
+//            }
+//            baseMapper.update(null, updateWrapper);
+//            log.info("设备状态更新：{} -> {},{},{},{},{}", uid, runningStatus,temperature,humidity,fan,door);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+// 处理状态上报
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public void handleStatusMessage(Message<?> message) {
         String payload = message.getPayload().toString();
@@ -115,6 +182,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
             Boolean door = json.getBoolean("door");
             Boolean fan = json.getBoolean("fan");
             Float temperature = json.getFloat("temperature");
+
             Float humidity = json.getFloat("humidity");
             QueryWrapper<Device> query = new QueryWrapper<>();
             query.eq("uid", uid);
@@ -132,38 +200,49 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, Device> implem
                 deviceData.setFan(fan);
                 deviceData.setRunningStatus(runningStatus);
             }
-            // 更新redis状态
-            redisCache.set(uid,deviceData);
             // 更新数据库状态
             UpdateWrapper<Device> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("uid", uid);
             if (runningStatus != null) {
                 updateWrapper.set("running_status", runningStatus);
             }
-            if (temperature != null){
+            if (temperature != null) {
                 updateWrapper.set("temperature", temperature);
-                // 新增温度告警
-                if (temperature > 29){
+                if (shouldTrigger(uid, temperature)) {
+                    JSONObject response = iotService.checkAndSendAlerts(uid, temperature).getBody();
+                    String utf8JsonString = response.toString();
+                    log.info("设备温度告警", utf8JsonString);
                     assert device != null;
-                    alertLogService.addAlertLog(device.getId(),json);
-                    List<AlertLogVO> logs = alertLogService.getSysAlertLogByDeviceId(device.getId()).getData();
+                    alertLogService.addAlertLog(device.getId(), utf8JsonString);
                 }
             }
-            if (humidity != null){
+            if (humidity != null) {
                 updateWrapper.set("humidity", humidity);
             }
-            if (door != null){
-
+            if (door != null) {
                 updateWrapper.set("door", door);
             }
-            if (fan != null){
+            if (fan != null) {
                 updateWrapper.set("fan", fan);
             }
+            redisCache.set(uid, deviceData);
             baseMapper.update(null, updateWrapper);
-            log.info("设备状态更新：{} -> {},{},{},{},{}", uid, runningStatus,temperature,humidity,fan,door);
+            log.info("设备状态更新：{} -> {},{},{},{},{}", uid, runningStatus, temperature, humidity, fan, door);
+
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("处理MQTT消息失败: {}", payload, e);
         }
+    }
+    public boolean shouldTrigger(String uid, float currentTemp) {
+        DEVICE_HISTORY.putIfAbsent(uid, new Float[]{null, null});
+        Float[] temps = DEVICE_HISTORY.get(uid);
+
+        // 更新温度窗口： [旧值, 新值] → [新值, 当前值]
+        temps[0] = temps[1];
+        temps[1] = currentTemp;
+
+        // 条件1：当前温度超阈值 & 条件2：上次温度未超标（避免连续告警）
+        return currentTemp > THRESHOLD && (temps[0] == null || temps[0] <= THRESHOLD);
     }
 
 }

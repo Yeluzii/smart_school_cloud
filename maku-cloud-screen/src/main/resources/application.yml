@@ -1,2 +1,19 @@
 server:
-  port: 8888
+  port: 8889
+spring:
+  application:
+    name: screen
+  cloud:
+    nacos:
+      username: @nacos.username@
+      password: @nacos.password@
+      discovery:
+        server-addr: @nacos.server-addr@
+        namespace: @nacos.namespace@
+      config:
+        server-addr: @nacos.server-addr@
+        namespace: @nacos.namespace@
+  config:
+    import:
+      - optional:nacos:datasource.yaml
+      - optional:nacos:common.yaml
