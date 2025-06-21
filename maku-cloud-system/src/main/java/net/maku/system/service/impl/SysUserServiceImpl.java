@@ -249,7 +249,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUserEntit
             public void doSaveBatch(List<SysUserExcelVO> result) {
                 ExcelUtils.parseDict(result);
                 List<SysUserEntity> userList = SysUserConvert.INSTANCE.convertListEntity(result);
-                userList.forEach(user -> user.setPassword(password));
+                userList.forEach(user -> {user.setPassword(password); user.setTenantId(Objects.requireNonNull(SecurityUser.getUser()).getTenantId());});
                 saveBatch(userList);
             }
         });

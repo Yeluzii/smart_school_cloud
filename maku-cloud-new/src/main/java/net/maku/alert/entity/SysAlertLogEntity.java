@@ -1,5 +1,6 @@
 package net.maku.alert.entity;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import com.baomidou.mybatisplus.annotation.*;
@@ -31,7 +32,7 @@ public class SysAlertLogEntity {
 	/**
 	* 告警数据
 	*/
-	@TableField(value = "alert_info")
+	@TableField(value = "alert_info", typeHandler = JacksonTypeHandler.class)
 	private Object alertInfo;
 
 }

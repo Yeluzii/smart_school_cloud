@@ -1,5 +1,6 @@
 package net.maku.alert.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -17,6 +18,7 @@ import cn.hutool.core.util.ObjectUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -64,6 +66,12 @@ public class SysAlertLogServiceImpl extends BaseServiceImpl<SysAlertLogDao, SysA
 
     @Override
     public void save(Long deviceId, Object info) {
+//        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
+//        QueryWrapper<SysAlertLogEntity> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("device_id", deviceId)
+//                .between("create_time", fiveMinutesAgo, LocalDateTime.now());
+//        List<SysAlertLogEntity> list = baseMapper.selectList(queryWrapper);
+
         SysAlertLogEntity entity = new SysAlertLogEntity();
         entity.setDeviceId(deviceId);
         entity.setAlertInfo(info);

@@ -1,3 +1,4 @@
 auth:
   ignore_urls:
     - /test
+    - /alert/log/**
